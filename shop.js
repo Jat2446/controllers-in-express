@@ -1,11 +1,63 @@
-const path = require('path');
+const Product = require('../models/product');
+const Cart = require('../models/cart')
 
-const express = require('express');
+exports.getProducts = (req, res, next) => {
+  Product.fetchAll()
+    .then(([rows,fieldname]) => {
+      res.render('shop/product-list', {
+        prods: rows,
+        pageTitle: 'All Products',
+        path: '/products'
+      });
+    });
+};
 
-const add = require('../controllers/product');
+exports.getProduct = (req,res,next) => {
+  const prodId = req.params.productId;
+  Product.findById(prodId,product =>{
+    res.render('shop/product-detail',{
+      product: product,
+      pageTitle: product.title.Product,
+      path:'/products'
+    })
+  })
+}
 
-const router = express.Router();
+exports.getIndex = (req, res, next) => {
+  Product.fetchAll()
+  .then(([rows, fileData]) => {
+    res.render('shop/index', {
+      prods: rows,
+      pageTitle: 'Shop',
+      path: '/'
+    });
+  }) 
+};
 
-router.get('/',add.getproduct);
+exports.getCart = (req, res, next) => {
+  res.render('shop/cart', {
+    path: '/cart',
+    pageTitle: 'Your Cart'
+  });
+};
+exports.postCart = (req,res,next) => {
+  const  prodId = req.body.productId;
+  Product.findById(prodId,(product) => {
+    Cart.addProduct(prodId,product.price)
+  })
+  res.redirect('/cart')
+}
 
-module.exports = router;
+exports.getOrders = (req, res, next) => {
+  res.render('shop/orders', {
+    path: '/orders',
+    pageTitle: 'Your Orders'
+  });
+};
+
+exports.getCheckout = (req, res, next) => {
+  res.render('shop/checkout', {
+    path: '/checkout',
+    pageTitle: 'Checkout'
+  });
+};

@@ -1,28 +1,27 @@
-const products = []
-
-exports.getAddProduct = (req, res, next) => {
-    res.render('add-product', {
-      pageTitle: 'Add Product',
-      path: '/admin/add-product',
-      formsCSS: true,
-      productCSS: true,
-      activeAddProduct: true
-    });
+// const Cart = require('./cart/')
+const db = require('../util/database')
+module.exports = class Product {
+  constructor(id, title, imageUrl, description, price) {
+    this.id = id;
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
   }
 
-exports.postAddProduct =  (req, res, next) => {
-    products.push({ title: req.body.title });
-    res.redirect('/');
+  save () {
+    db.execute('Insert into products (title,price,imageUrl,descrption) values (?,?,?,?)',
+    [this.title,this.price,this.imageUrl, this.descrption]
+    )
   }
 
-exports.getproduct =  (req, res, next) => {
-    res.render('shop', {
-      prods: products,
-      pageTitle: 'Shop',
-      path: '/',
-      //hasProducts: products.length > 0,
-      activeShop: true,
-      productCSS: true
-    });
-  }
+  staticdeleteById(id) {
 
+  }
+  static fetchAll() {
+    return db.execute('Select * from products')
+  }
+  static findById(id){
+    
+  }
+};
